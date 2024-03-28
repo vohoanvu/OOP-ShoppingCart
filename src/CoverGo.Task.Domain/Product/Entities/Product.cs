@@ -11,6 +11,6 @@ namespace CoverGo.Task.Domain
 
         public decimal Price { get; set; }
 
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } = 1;
     }
 }

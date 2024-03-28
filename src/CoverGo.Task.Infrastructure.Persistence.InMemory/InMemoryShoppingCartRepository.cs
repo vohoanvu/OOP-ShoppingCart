@@ -12,10 +12,19 @@ namespace CoverGo.Task.Infrastructure.Persistence.InMemory
             _initialCarts = initialCart;
         }
 
-        public ShoppingCart AddItemToCart(ShoppingCart cart, Product item)
+        public void AddItemToCart(ShoppingCart cart, Product product)
         {
-            cart.Items.Add(item);
-            return cart;
+            var existingProduct = cart.Items.FirstOrDefault(p => p.Name == product.Name);
+            if (existingProduct != null)
+            {
+                // If the product already exists in the cart, increase the quantity
+                existingProduct.Quantity++;
+            }
+            else
+            {
+                // If the product does not exist in the cart, add it with a quantity of 1
+                cart.Items.Add(product);
+            }
         }
     }
 }

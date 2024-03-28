@@ -29,7 +29,7 @@ namespace CoverGo.Task.Api.Tests
                 CartLabel = "Test Cart",
                 Items = new List<Product>()
             };
-            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
+            var tennisBall = new Product() { Id=1, Name="Tennis Ball", Price=5 };
 
             // Act
             _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
@@ -48,8 +48,8 @@ namespace CoverGo.Task.Api.Tests
                 CartLabel = "Test Cart",
                 Items = new List<Product>()
             };
-            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
-            var tennisRacket = new Product() { Name="Tennis Racket", Price=20 };
+            var tennisBall = new Product() { Id=1, Name="Tennis Ball", Price=5 };
+            var tennisRacket = new Product() { Id=2, Name="Tennis Racket", Price=20 };
 
             // Act
             _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
@@ -73,14 +73,15 @@ namespace CoverGo.Task.Api.Tests
                     new() { Id=1, Name="Tennis Ball", Price=5 }
                 },
             };
-            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
+            var tennisBall = new Product() { Id = 1, Name="Tennis Ball", Price=5 };
 
             // Act
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!);
 
             // Assert
-            Assert.Contains(tennisBall, shoppingCart.Items);
-            Assert.Equal(2, shoppingCart.Items.Count);
+            var item = Assert.Single(shoppingCart.Items); // Assert that there is only one product in the cart
+            Assert.Equal("Tennis Ball", item.Name);
+            Assert.Equal(2, item.Quantity); // Assert that the quantity has increased to 2
         }
     }
 

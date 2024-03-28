@@ -4,6 +4,6 @@ namespace CoverGo.Task.Application
 {
     public interface IShoppingCartWriteRepository
     {
-        public ShoppingCart AddItemToCart(ShoppingCart cart, Product item);
+        public void AddItemToCart(ShoppingCart cart, Product item);
     }
 }
