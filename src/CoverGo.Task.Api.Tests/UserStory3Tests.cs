@@ -1,41 +1,48 @@
-﻿namespace CoverGo.Task.Api.Tests
+﻿using CoverGo.Task.Domain;
+using CoverGo.Task.Infrastructure.Persistence.InMemory;
+
+namespace CoverGo.Task.Api.Tests
 {
     public class UserStory3Tests
     {
-        private ProductService _productService;
-        private ShoppingCartService _shoppingCartService;
+        private InMemoryProductsRepository _productService;
+        private InMemoryShoppingCartRepository _shoppingCartService;
 
         public UserStory3Tests()
         {
-            // Assuming ProductService and ShoppingCartService are already implemented
-            _productService = new ProductService();
-            _shoppingCartService = new ShoppingCartService();
+            // Assuming InMemoryProductsRepository and InMemoryShoppingCartRepository are already implemented
+            _productService = new InMemoryProductsRepository([]);
+            _shoppingCartService = new InMemoryShoppingCartRepository([]);
 
             // Adding products to the ProductService for testing
-            _productService.AddProduct(new Product("Tennis Ball", 5));
-            _productService.AddProduct(new Product("Tennis Racket", 20));
-            _productService.AddProduct(new Product("T-Shirt", 10));
+            _productService.AddProductAsync(new Product() { Name = "Tennis Ball", Price = 5 });
+            _productService.AddProductAsync(new Product() { Name = "Tennis Racket", Price = 20 });
+            _productService.AddProductAsync(new Product() { Name = "T-Shirt", Price = 10 });
         }
 
         [Fact]
         public void CalculateTotalPriceOfShoppingCart_ReturnsCorrectTotalPrice()
         {
             // Arrange
-            var shoppingCart = new ShoppingCart();
-            var tennisBall = _productService.GetProductByName("Tennis Ball");
-            var tennisRacket = _productService.GetProductByName("Tennis Racket");
-            var tShirt = _productService.GetProductByName("T-Shirt");
-
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisRacket!, 2);
-            _shoppingCartService.AddItemToCart(shoppingCart, tShirt!, 1);
+            var shoppingCart = new ShoppingCart() { 
+                Id = 1, 
+                CartLabel = "Test Cart", 
+                Items = [] 
+            };
+            var tennisBall = new Product() { Id = 1, Name = "Tennis Ball", Price = 5 };
+            var tennisRacket = new Product() { Id = 2, Name = "Tennis Racket", Price = 20 };
+            var tShirt =new Product() { Id = 3, Name = "T-Shirt", Price = 10 };
 
             // Act
-            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisRacket);
+            _shoppingCartService.AddItemToCart(shoppingCart, tShirt);
+
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart , new Domain.Discount.Entities.DiscountRule());
 
             // Assert
-            Assert.Equal(75, totalPrice);
+            var expectedTotalPrice = tennisBall.Price + tennisRacket.Price + tShirt.Price;
+            Assert.Equal(expectedTotalPrice, totalPrice);
         }
     }
-
 }

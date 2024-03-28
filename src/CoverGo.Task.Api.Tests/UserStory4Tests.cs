@@ -1,77 +1,87 @@
-﻿namespace CoverGo.Task.Api.Tests
+﻿using CoverGo.Task.Domain;
+using CoverGo.Task.Domain.Discount.Entities;
+using CoverGo.Task.Infrastructure.Persistence.InMemory;
+
+namespace CoverGo.Task.Api.Tests
 {
     public class UserStory4Tests
     {
-        private ProductService _productService;
-        private ShoppingCartService _shoppingCartService;
-        private DiscountService _discountService;
+        private InMemoryProductsRepository _productService;
+        private InMemoryShoppingCartRepository _shoppingCartService;
+        private InMemoryDiscountRuleRepository _discountRuleService;
 
         public UserStory4Tests()
         {
-            // Assuming ProductService, ShoppingCartService, and DiscountService are already implemented
-            _productService = new ProductService();
-            _shoppingCartService = new ShoppingCartService();
-            _discountService = new DiscountService();
+            _productService = new InMemoryProductsRepository(new List<Product>());
+            _shoppingCartService = new InMemoryShoppingCartRepository(new List<ShoppingCart>());
+            _discountRuleService = new InMemoryDiscountRuleRepository(new List<DiscountRule>());
 
-            // Adding products to the ProductService for testing
-            _productService.AddProduct(new Product("Tennis Ball", 5));
-            _productService.AddProduct(new Product("Tennis Racket", 20));
-            _productService.AddProduct(new Product("T-Shirt", 10));
+            _productService.AddProductAsync(new Product() { Name = "Tennis Ball", Price = 5 });
+            _productService.AddProductAsync(new Product() { Name = "Tennis Racket", Price = 20 });
         }
 
         [Fact]
         public void CreateDiscount_AddsDiscountSuccessfully()
         {
             // Arrange
-            var tShirt = _productService.GetProductByName("T-Shirt");
+            var product = new Product() { Id = 1, Name = "Tennis Ball", Price = 5 };
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = product.Id, 
+                DiscountQuantity = 3,
+                DeductionAmount = 5
+            };
 
             // Act
-            _discountService.CreateItemDiscount(tShirt!, 3);
+            var addedDiscountRule = _discountRuleService.AddDiscountRuleAsync(discountRule);
 
             // Assert
-            Assert.True(_discountService.IsDiscountApplied(tShirt!));
+            Assert.NotNull(addedDiscountRule);
+            Assert.Equal(discountRule.ProductId, addedDiscountRule.ProductId);
+            Assert.Equal(discountRule.DiscountQuantity, addedDiscountRule.DiscountQuantity);
+            Assert.Equal(discountRule.DeductionAmount, addedDiscountRule.DeductionAmount);
         }
 
         [Fact]
         public void CalculateTotalPriceWithDiscount_ReturnsDiscountedPrice()
         {
             // Arrange
-            var shoppingCart = new ShoppingCart();
-            var tennisBall = _productService.GetProductByName("Tennis Ball");
-            var tennisRacket = _productService.GetProductByName("Tennis Racket");
-            var tShirt = _productService.GetProductByName("T-Shirt");
+            var shoppingCart = new ShoppingCart() { CartLabel = "Test Cart", Items = new List<Product>() };
+            var tennisBall = new Product() { Id = 1, Name = "Tennis Ball", Price = 5 };
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
 
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisRacket!, 1);
-            _shoppingCartService.AddItemToCart(shoppingCart, tShirt!, 3);
-
-            _discountService.CreateItemDiscount(tShirt!, 3);
+            var discountRule = new DiscountRule { ProductId = tennisBall.Id, DiscountQuantity = 3, DeductionAmount = 5 };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
 
             // Act
-            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart);
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
 
             // Assert
-            Assert.Equal(35, totalPrice);
+            var expectedTotalPrice = (tennisBall.Price * 3) - discountRule.DeductionAmount;
+            Assert.Equal(expectedTotalPrice, totalPrice);
         }
 
         [Fact]
         public void CreateDiscountWithMissingProduct_ThrowsException()
         {
             // Arrange
-            var nonExistingProduct = new Product("Non-Existing Product", 5);
+            var discountRule = new DiscountRule { ProductId = -1, DiscountQuantity = 3, DeductionAmount = 5 };
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _discountService.CreateItemDiscount(nonExistingProduct, 3));
+            var exception = Assert.Throws<ArgumentException>(() => _discountRuleService.AddDiscountRuleAsync(discountRule));
         }
 
         [Fact]
         public void CreateDiscountWithNonPositiveForEvery_ThrowsException()
         {
             // Arrange
-            var tShirt = _productService.GetProductByName("T-Shirt");
+            var product = new Product() { Name = "Tennis Ball", Price = 5 };
+            var discountRule = new DiscountRule { ProductId = product.Id, DiscountQuantity = 0, DeductionAmount = 5 };
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _discountService.CreateItemDiscount(tShirt!, 0));
+            var exception = Assert.Throws<ArgumentException>(() => _discountRuleService.AddDiscountRuleAsync(discountRule));
         }
     }
 

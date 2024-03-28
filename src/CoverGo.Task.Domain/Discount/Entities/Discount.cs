@@ -26,7 +26,7 @@ namespace CoverGo.Task.Domain.Discount.Entities
 
         public int DiscountQuantity { get; set; }
 
-        public int DeductionAmoun { get; set; }
+        public int DeductionAmount { get; set; }
     }
 
     public class VoucherResponseModel
