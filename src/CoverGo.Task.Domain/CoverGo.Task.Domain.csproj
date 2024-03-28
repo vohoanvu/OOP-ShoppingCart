@@ -1,2 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <Folder Include="Company\Service\" />
+    <Folder Include="Discount\Service\" />
+  </ItemGroup>
 </Project>

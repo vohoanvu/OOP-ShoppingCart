@@ -1,4 +1,4 @@
-namespace CoverGo.Task.Domain;
+namespace CoverGo.Task.Domain.Company.Entities;
 
 public class Plan
 {

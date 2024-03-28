@@ -1,4 +1,8 @@
-﻿namespace CoverGo.Task.Domain
+﻿
+
+using CoverGo.Task.Domain.ShopppingCart.Entities;
+
+namespace CoverGo.Task.Domain.Product.Entities
 {
     public class ProductInShoppingCart
     {

@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using CoverGo.Task.Domain.ShopppingCart.Entities;
 
-namespace CoverGo.Task.Domain
+namespace CoverGo.Task.Domain.Discount.Entities
 {
     public class Discount
     {
@@ -25,6 +25,8 @@ namespace CoverGo.Task.Domain
         public int ProductId { get; set; }
 
         public int DiscountQuantity { get; set; }
+
+        public int DeductionAmoun { get; set; }
     }
 
     public class VoucherResponseModel

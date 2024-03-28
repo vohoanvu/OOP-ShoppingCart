@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 
 using CoverGo.Task.Application;
-using CoverGo.Task.Domain;
+using CoverGo.Task.Domain.Company.Entities;
 
 namespace CoverGo.Task.Infrastructure.Persistence.InMemory;
 
