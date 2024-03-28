@@ -1,4 +1,4 @@
-using CoverGo.Task.Domain.Product.Entities;
+using CoverGo.Task.Domain;
 using CoverGo.Task.Infrastructure.Persistence.InMemory;
 
 namespace CoverGo.Task.Api.Tests

@@ -1,4 +1,4 @@
-﻿using CoverGo.Task.Domain.Product.Entities;
+﻿using CoverGo.Task.Domain;
 
 namespace CoverGo.Task.Application
 {

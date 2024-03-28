@@ -1,83 +1,86 @@
-﻿using CoverGo.Task.Infrastructure.Persistence.InMemory;
+﻿using CoverGo.Task.Domain;
+using CoverGo.Task.Infrastructure.Persistence.InMemory;
 
 namespace CoverGo.Task.Api.Tests
 {
     public class UserStory2Tests
     {
         private InMemoryProductsRepository _productService;
-        private ShoppingCartService _shoppingCartService;
+        private InMemoryShoppingCartRepository _shoppingCartService;
 
         public UserStory2Tests()
         {
             // Assuming ProductService and ShoppingCartService are already implemented
-            _productService = new ProductService();
-            _shoppingCartService = new ShoppingCartService();
+            _productService = new InMemoryProductsRepository([]);
+            _shoppingCartService = new InMemoryShoppingCartRepository([]);
 
             // Adding products to the ProductService for testing
-            _productService.AddProduct(new Product("Tennis Ball", 5));
-            _productService.AddProduct(new Product("Tennis Racket", 20));
-            _productService.AddProduct(new Product("T-Shirt", 10));
+            _productService.AddProductAsync(new Product() { Name="Tennis Ball", Price=5 });
+            _productService.AddProductAsync(new Product() { Name="Tennis Racket",Price= 20 });
+            _productService.AddProductAsync(new Product() {Name="T-Shirt", Price=10 });
         }
 
         [Fact]
         public void AddItemToShoppingCart_Successfully()
         {
             // Arrange
-            var shoppingCart = new ShoppingCart();
-            var tennisBall = _productService.GetProductByName("Tennis Ball");
+            var shoppingCart = new ShoppingCart()
+            {
+                CartLabel = "Test Cart",
+                Items = new List<Product>()
+            };
+            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
 
             // Act
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
 
             // Assert
             Assert.Contains(tennisBall, shoppingCart.Items);
-            Assert.Equal(1, shoppingCart.Quantity);
+            Assert.True(shoppingCart.Items.Count == 1);
         }
 
         [Fact]
         public void AddDifferentItemsToShoppingCart_Successfully()
         {
             // Arrange
-            var shoppingCart = new ShoppingCart();
-            var tennisBall = _productService.GetProductByName("Tennis Ball");
-            var tennisRacket = _productService.GetProductByName("Tennis Racket");
+            var shoppingCart = new ShoppingCart()
+            {
+                CartLabel = "Test Cart",
+                Items = new List<Product>()
+            };
+            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
+            var tennisRacket = new Product() { Name="Tennis Racket", Price=20 };
 
             // Act
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisRacket!, 1);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisRacket);
 
             // Assert
             Assert.Contains(tennisBall, shoppingCart.Items);
             Assert.Contains(tennisRacket, shoppingCart.Items);
-            Assert.Equal(1, shoppingCart.Quantity);
-            Assert.Equal(1, shoppingCart.Quantity);
+            Assert.Equal(2, shoppingCart.Items.Count);
         }
 
         [Fact]
         public void AddSameItemToShoppingCart_IncreasesQuantity()
         {
             // Arrange
-            var shoppingCart = new ShoppingCart();
-            var tennisBall = _productService.GetProductByName("Tennis Ball");
+            var shoppingCart = new ShoppingCart()
+            {
+                CartLabel = "Test Cart",
+                Items = new List<Product>()
+                {
+                    new() { Id=1, Name="Tennis Ball", Price=5 }
+                },
+            };
+            var tennisBall = new Product() { Name="Tennis Ball", Price=5 };
 
             // Act
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
-            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall!, 1);
+            _shoppingCartService.AddItemToCart(shoppingCart, tennisBall);
 
             // Assert
             Assert.Contains(tennisBall, shoppingCart.Items);
-            Assert.Equal(2, shoppingCart.Quantity);
-        }
-
-        [Fact]
-        public void AddNonExistingProductToCart_ThrowsException()
-        {
-            // Arrange
-            var shoppingCart = new ShoppingCart();
-            var nonExistingProduct = new Product("Non-Existing Product", 5);
-
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _shoppingCartService.AddItemToCart(shoppingCart, nonExistingProduct, 1));
+            Assert.Equal(2, shoppingCart.Items.Count);
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CoverGo.Task.Domain.Product.Entities
+namespace CoverGo.Task.Domain
 {
     public class Product
     {
@@ -12,8 +12,5 @@ namespace CoverGo.Task.Domain.Product.Entities
         public decimal Price { get; set; }
 
         public int Quantity { get; set; }
-
-        [JsonIgnore]
-        public virtual List<ProductInShoppingCart>? ProductInCarts { get; set; }
     }
 }

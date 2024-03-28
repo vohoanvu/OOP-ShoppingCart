@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CoverGo.Task.Domain.ShopppingCart.Entities;
+using CoverGo.Task.Domain;
 
 namespace CoverGo.Task.Domain.Discount.Entities
 {

@@ -1,5 +1,5 @@
 ﻿using CoverGo.Task.Application;
-using CoverGo.Task.Domain.Product.Entities;
+using CoverGo.Task.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoverGo.Task.Api.Controllers
