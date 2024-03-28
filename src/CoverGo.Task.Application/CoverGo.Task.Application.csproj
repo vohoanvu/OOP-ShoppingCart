@@ -4,4 +4,9 @@
     <ProjectReference Include="..\CoverGo.Task.Domain\CoverGo.Task.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Discount\" />
+    <Folder Include="ShoppingCart\" />
+  </ItemGroup>
+
 </Project>

@@ -6,6 +6,6 @@ namespace CoverGo.Task.Application
     {
         public ValueTask<Product> GetById(int id, CancellationToken cancellationToken = default);
 
-        public ValueTask AddProduct(Product product, CancellationToken cancellationToken = default);
+        public ValueTask<Product> AddProductAsync(Product product, CancellationToken cancellationToken = default);
     }
 }

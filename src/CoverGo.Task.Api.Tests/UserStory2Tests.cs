@@ -1,8 +1,10 @@
-﻿namespace CoverGo.Task.Api.Tests
+﻿using CoverGo.Task.Infrastructure.Persistence.InMemory;
+
+namespace CoverGo.Task.Api.Tests
 {
     public class UserStory2Tests
     {
-        private ProductService _productService;
+        private InMemoryProductsRepository _productService;
         private ShoppingCartService _shoppingCartService;
 
         public UserStory2Tests()

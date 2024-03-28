@@ -1,12 +1,16 @@
-﻿using System.Collections.Immutable;
-using CoverGo.Task.Application;
+﻿using CoverGo.Task.Application;
 using CoverGo.Task.Domain.Product.Entities;
 
 namespace CoverGo.Task.Infrastructure.Persistence.InMemory;
 
 public class InMemoryProductsRepository : IProductsQuery, IProductsWriteRepository
 {
-    private ImmutableList<Product> _products = ImmutableList<Product>.Empty;
+    private List<Product> _products;
+
+    public InMemoryProductsRepository(List<Product> initialProducts)
+    {
+        _products = initialProducts;
+    }
 
     public ValueTask<Product> GetById(int id, CancellationToken cancellationToken = default)
     {
@@ -16,12 +20,12 @@ public class InMemoryProductsRepository : IProductsQuery, IProductsWriteReposito
         return ValueTask.FromResult(product);
     }
 
-    public ValueTask<List<Product>> ExecuteAsync()
+    public ValueTask<List<Product>> GetProductsAsync()
     {
         return ValueTask.FromResult(_products.ToList());
     }
 
-    public ValueTask AddProduct(Product product, CancellationToken cancellationToken = default)
+    public ValueTask<Product> AddProductAsync(Product product, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(product.Name))
             throw new ArgumentException("Product name is required.", nameof(product));
@@ -33,8 +37,8 @@ public class InMemoryProductsRepository : IProductsQuery, IProductsWriteReposito
             throw new InvalidOperationException("Duplicate product cannot be added.");
 
         product.Id = _products.Any() ? _products.Max(p => p.Id) + 1 : 1;
-        _products = _products.Add(product);
+        _products.Add(product);
 
-        return ValueTask.CompletedTask;
+        return ValueTask.FromResult(product);;
     }
 }
