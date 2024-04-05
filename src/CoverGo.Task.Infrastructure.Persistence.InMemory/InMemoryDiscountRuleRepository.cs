@@ -45,5 +45,17 @@ namespace CoverGo.Task.Infrastructure.Persistence.InMemory
 
             return discountRule;
         }
+
+        public SetDiscountRule AddSetDiscountRule(SetDiscountRule setDiscountRule)
+        {
+            if (setDiscountRule.ProductIds == null || !setDiscountRule.ProductIds.Any() || setDiscountRule.ProductIds.Count() == 1)
+                throw new ArgumentException("Product IDs must not be null or empty.", nameof(setDiscountRule));
+
+            _discountRules.Add(setDiscountRule);
+
+            return setDiscountRule;
+        }
+
+
     }
 }

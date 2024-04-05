@@ -29,6 +29,11 @@ namespace CoverGo.Task.Domain.Discount.Entities
         public int DeductionAmount { get; set; }
     }
 
+    public class SetDiscountRule : DiscountRule
+    {
+        public List<int> ProductIds { get; set; } = default!;
+    }
+
     public class VoucherResponseModel
     {
         public bool Applied { get; set; }

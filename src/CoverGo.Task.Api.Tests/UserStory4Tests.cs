@@ -83,6 +83,220 @@ namespace CoverGo.Task.Api.Tests
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => _discountRuleService.AddDiscountRuleAsync(discountRule));
         }
+
+        [Fact]
+        public void CreateDiscountRuleForJeans1_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 2);
+
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = jeans.Id, 
+                DiscountQuantity = 3, 
+                DeductionAmount = 20
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
+
+            // Assert
+            var expectedTotalPrice = 40;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForJeans2_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 3);
+
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = jeans.Id, 
+                DiscountQuantity = 3, 
+                DeductionAmount = 20
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
+
+            // Assert
+            var expectedTotalPrice = 40;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForJeans3_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+            var tShirt = new Product() { Id = 2, Name = "T-Shirt", Price = 10 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 5);
+
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = jeans.Id, 
+                DiscountQuantity = 3, 
+                DeductionAmount = 20
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
+
+            // Assert
+            var expectedTotalPrice = 80;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForJeans4_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+            var tShirt = new Product() { Id = 2, Name = "T-Shirt", Price = 10 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 6);
+            _shoppingCartService.AddItemToCart(shoppingCart, tShirt, 1);
+
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = jeans.Id, 
+                DiscountQuantity = 3, 
+                DeductionAmount = 20
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
+
+            // Assert
+            var expectedTotalPrice = 90;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForJeans5_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+            var tShirt = new Product() { Id = 2, Name = "T-Shirt", Price = 10 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 6);
+            _shoppingCartService.AddItemToCart(shoppingCart, tShirt, 3);
+
+            var discountRule = new DiscountRule 
+            { 
+                ProductId = jeans.Id, 
+                DiscountQuantity = 3, 
+                DeductionAmount = 20
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRule);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPrice(shoppingCart, discountRule);
+
+            // Assert
+            var expectedTotalPrice = 110;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForSetofJeansAndTshirt_1_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+            var tShirt = new Product() { Id = 2, Name = "T-Shirt", Price = 10 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 2);
+            _shoppingCartService.AddItemToCart(shoppingCart, tShirt, 1);
+
+            var discountRuleJeans = new SetDiscountRule 
+            { 
+                ProductIds = new List<int> { jeans.Id, tShirt.Id },
+                DiscountQuantity = 2,
+                DeductionAmount = 15,
+                ProductId = jeans.Id
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRuleJeans);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPriceForSetDiscountRule(shoppingCart, discountRuleJeans);
+
+            // Assert
+            var expectedTotalPrice = 50;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
+
+        [Fact]
+        public void CreateDiscountRuleForSetofJeansAndTshirt_3_success()
+        {
+            // Arrange
+            var shoppingCart = new ShoppingCart() 
+            { 
+                CartLabel = "Test Cart",
+                Items = new List<Product>() 
+            };
+            var jeans = new Product() { Id = 1, Name = "Jeans", Price = 20 };
+            var tShirt = new Product() { Id = 2, Name = "T-Shirt", Price = 10 };
+
+            _shoppingCartService.AddItemToCart(shoppingCart, jeans, 2);
+            _shoppingCartService.AddItemToCart(shoppingCart, tShirt, 2);
+
+            var discountRuleJeans = new SetDiscountRule 
+            { 
+                ProductIds = new List<int> { jeans.Id, tShirt.Id },
+                DiscountQuantity = 2,
+                DeductionAmount = 15,
+                ProductId = jeans.Id
+            };
+            _discountRuleService.AddDiscountRuleAsync(discountRuleJeans);
+
+            // Act
+            var totalPrice = _shoppingCartService.CalculateTotalPriceForSetDiscountRule(shoppingCart, discountRuleJeans);
+
+            // Assert
+            var expectedTotalPrice = 45;
+            Assert.Equal(expectedTotalPrice, totalPrice);
+        }
     }
 
 }
